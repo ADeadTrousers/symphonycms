@@ -528,7 +528,7 @@ class MySQL
         $query_type = $this->determineQueryType($query);
         $query_hash = md5($query.$start);
 
-        if (self::$_connection['tbl_prefix'] !== 'tbl_') {
+        if (isset(self::$_connection['tbl_prefix']) && self::$_connection['tbl_prefix'] !== 'tbl_') {
             $query = preg_replace('/tbl_(\S+?)([\s\.,]|$)/', self::$_connection['tbl_prefix'].'\\1\\2', $query);
         }
 
