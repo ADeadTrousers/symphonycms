@@ -311,7 +311,7 @@ class FieldTagList extends Field implements ExportableField, ImportableField
             return false;
         }
 
-        $fields = array();
+        $fields = array('validator' => null); // 'validator' added by Peter S
 
         $fields['pre_populate_source'] = (is_null($this->get('pre_populate_source')) ? 'none' : implode(',', $this->get('pre_populate_source')));
         $fields['validator'] = ($fields['validator'] == 'custom' ? null : $this->get('validator'));

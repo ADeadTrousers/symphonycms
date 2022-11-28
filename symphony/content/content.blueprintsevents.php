@@ -408,6 +408,7 @@ class contentBlueprintsEvents extends ResourcesPage
 
     public function __formAction()
     {
+        $existing_handle = null; // Added by Peter S
         $fields = $_POST['fields'];
         $this->_errors = array();
         $providers = Symphony::ExtensionManager()->getProvidersOf(iProvider::EVENT);
@@ -612,6 +613,7 @@ class contentBlueprintsEvents extends ResourcesPage
                 }
 
                 // Attach this event to pages
+                $fields['connections'] = $fields['connections'] ?? null;
                 $connections = $fields['connections'];
                 ResourceManager::setPages(ResourceManager::RESOURCE_TYPE_EVENT, is_null($existing_handle) ? $classname : $existing_handle, $connections);
 

@@ -88,13 +88,13 @@ abstract class Symphony implements Singleton
     {
         self::$Profiler = Profiler::instance();
 
-        if (get_magic_quotes_gpc()) {
+        /*if (get_magic_quotes_gpc()) {
             General::cleanArray($_SERVER);
             General::cleanArray($_COOKIE);
             General::cleanArray($_GET);
             General::cleanArray($_POST);
             General::cleanArray($_REQUEST);
-        }
+        }*/
 
         // Initialize language management
         Lang::initialize();
@@ -719,8 +719,11 @@ abstract class Symphony implements Singleton
             self::$namespace = null;
         } else {
             $bits = explode('/', $page);
+            $bits[0] = $bits[0] ?? null;
 
             if ($bits[0] == 'extension') {
+                $bits[1] = $bits[1] ?? null;
+                $bits[2] = $bits[2] ?? null;
                 self::$namespace = sprintf('/%s/%s/%s', $bits[0], $bits[1], $bits[2]);
             } else {
                 self::$namespace =  sprintf('/%s/%s', $bits[0], isset($bits[1]) ? $bits[1] : '');
@@ -987,7 +990,7 @@ class DatabaseExceptionHandler extends GenericExceptionHandler
         );
 
         $html = str_replace('{ASSETS_URL}', ASSETS_URL, $html);
-        $html = str_replace('{SYMPHONY_URL}', SYMPHONY_URL, $html);
+        #$html = str_replace('{SYMPHONY_URL}', SYMPHONY_URL, $html);
         $html = str_replace('{URL}', URL, $html);
 
         return $html;

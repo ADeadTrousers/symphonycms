@@ -1136,6 +1136,8 @@ class AdministrationPage extends HTMLPage
                 foreach ($extension_navigation as $item) {
                     $type = isset($item['children']) ? Extension::NAV_GROUP : Extension::NAV_CHILD;
 
+                    $item['location'] = $item['location'] ?? null;
+
                     switch ($type) {
                         case Extension::NAV_GROUP:
                             $index = General::array_find_available_index($nav, $item['location']);
@@ -1216,6 +1218,9 @@ class AdministrationPage extends HTMLPage
      */
     private static function createChildNavItem($item, $extension_handle)
     {
+        $item['link'] = $item['link'] ?? null;
+        $link = false;
+
         if (!isset($item['relative']) || $item['relative'] === true) {
             $link = '/extension/' . $extension_handle . '/' . ltrim($item['link'], '/');
         } else {

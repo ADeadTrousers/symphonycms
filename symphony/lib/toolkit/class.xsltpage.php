@@ -116,7 +116,9 @@ class XSLTPage extends Page
      */
     public function setRuntimeParam($param)
     {
-        $this->_param = str_replace("'", "&apos;", $param);
+        foreach ($param as $name => $value) {
+            $this->_param[$name] = str_replace("'", "&apos;", $value);
+        }
     }
 
     /**

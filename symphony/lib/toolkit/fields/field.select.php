@@ -528,17 +528,37 @@ class FieldSelect extends FieldTagList implements ExportableField, ImportableFie
 
         foreach ($records as $r) {
             $data = $r->getData($this->get('id'));
-            $value = General::sanitize($data['value']);
 
-            if (!isset($groups[$this->get('element_name')][$data['handle']])) {
-                $groups[$this->get('element_name')][$data['handle']] = array(
-                    'attr' => array('handle' => $data['handle'], 'value' => $value),
-                    'records' => array(),
-                    'groups' => array()
-                );
+            if (!isset($data['value'])) continue;
+
+            if (is_array($data['value'])) {
+                foreach ($data['value'] as $key => $v) {
+                    $value = General::sanitize($v);
+
+                    if (!isset($groups[$this->get('element_name')][$data['handle'][$key]])) {
+                        $groups[$this->get('element_name')][$data['handle'][$key]] = array(
+                            'attr' => array('handle' => $data['handle'][$key], 'value' => $value),
+                            'records' => array(),
+                            'groups' => array()
+                        );
+                    }
+
+                    $groups[$this->get('element_name')][$data['handle'][$key]]['records'][] = $r;
+                }
             }
+            else {
+                $value = General::sanitize($data['value']);
 
-            $groups[$this->get('element_name')][$data['handle']]['records'][] = $r;
+                if (!isset($groups[$this->get('element_name')][$data['handle']])) {
+                    $groups[$this->get('element_name')][$data['handle']] = array(
+                        'attr' => array('handle' => $data['handle'], 'value' => $value),
+                        'records' => array(),
+                        'groups' => array()
+                    );
+                }
+
+                $groups[$this->get('element_name')][$data['handle']]['records'][] = $r;
+            }
         }
 
         return $groups;

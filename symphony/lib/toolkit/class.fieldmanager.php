@@ -331,7 +331,12 @@ class FieldManager implements FileResource
                     }
 
                     // Get the context for this field from our previous queries.
-                    $context = $field_contexts[$f['type']][$f['id']];
+                    // Modified by Peter S.
+                    if (isset($field_contexts[$f['type']][$f['id']])) {
+                        $context = $field_contexts[$f['type']][$f['id']];
+                    } else {
+                        $context = null;
+                    }
 
                     if (is_array($context) && !empty($context)) {
                         try {
@@ -619,6 +624,7 @@ class FieldManager implements FileResource
         $fields = Symphony::Database()->fetchCol('type', "SELECT DISTINCT `type` FROM `tbl_fields` WHERE `type` NOT IN ('author', 'checkbox', 'date', 'input', 'select', 'taglist', 'upload')");
 
         if (!empty($fields)) {
+            $table = '';
             foreach ($fields as $field) {
                 try {
                     $table = Symphony::Database()->fetchVar('count', 0, sprintf(

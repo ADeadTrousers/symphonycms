@@ -1024,8 +1024,8 @@ class contentBlueprintsDatasources extends ResourcesPage
             Widget::Anchor(__('Data Sources'), SYMPHONY_URL . '/blueprints/datasources/'),
         ));
         $this->Form->setAttribute('id', 'controller');
-
-        $link = $about['author']['name'];
+                
+        $link = $about['author']['name'] ?? null;
 
         if (isset($about['author']['website'])) {
             $link = Widget::Anchor($about['author']['name'], General::validateURL($about['author']['website']));
@@ -1153,7 +1153,23 @@ class contentBlueprintsDatasources extends ResourcesPage
 
     public function __formAction()
     {
-        $fields = $_POST['fields'];
+        $fields = array(
+            'order' => null,
+            'group' => null,
+            'paginate_results' => null,
+            'max_records' => null,
+            'page_number' => null,
+            'redirect_on_empty' => null,
+            'redirect_on_forbidden' => null,
+            'redirect_on_required' => null,
+            'required_url_param' => null,
+            'param' => null,
+            'sort' => null,
+            'html_encode' => null,
+            'associated_entry_counts' => null,
+            'connections' => null
+        );
+        $fields = array_merge($fields, $_POST['fields']);
         $this->_errors = array();
         $providers = Symphony::ExtensionManager()->getProvidersOf(iProvider::DATASOURCE);
         $providerClass = null;
@@ -1223,6 +1239,7 @@ class contentBlueprintsDatasources extends ResourcesPage
         $isDuplicate = false;
         $queueForDeletion = null;
 
+        $existing_handle = null;
         if ($this->_context[0] == 'new' && is_file($file)) {
             $isDuplicate = true;
         } elseif ($this->_context[0] == 'edit') {
@@ -1269,6 +1286,7 @@ class contentBlueprintsDatasources extends ResourcesPage
 
             // Do dependencies, the template file must have <!-- CLASS NAME -->
             $dsShell = str_replace('<!-- CLASS NAME -->', $classname, $dsShell);
+            $dependencies = null;
 
             // If there is a provider, let them do the prepartion work
             if ($providerClass) {
@@ -1324,9 +1342,10 @@ class contentBlueprintsDatasources extends ResourcesPage
                         break;
                     default:
                         $extends = 'SectionDatasource';
+                        $fields['xml_elements'] = $fields['xml_elements'] ?? null;
                         $elements = $fields['xml_elements'];
 
-                        if (is_array($fields['filter']) && !empty($fields['filter'])) {
+                        if (isset($fields['filter']) && !empty($fields['filter'])) {
                             $filters = array();
 
                             foreach ($fields['filter'] as $f) {
@@ -1636,7 +1655,7 @@ class contentBlueprintsDatasources extends ResourcesPage
      *  Returns an array with the 'data' if it is a valid URL, otherwise a string
      *  containing an error message.
      */
-    public static function __isValidURL($url, $timeout = 6, &$error)
+    public static function __isValidURL($url, &$error, $timeout = 6)
     {
         if (!filter_var($url, FILTER_VALIDATE_URL)) {
             $error = __('Invalid URL');

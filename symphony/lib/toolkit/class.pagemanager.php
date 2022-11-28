@@ -87,7 +87,7 @@ class PageManager
      * @throws DatabaseException
      * @return boolean
      */
-    public static function addPageTypesToPage($page_id = null, array $types)
+    public static function addPageTypesToPage(array $types, $page_id = null)
     {
         if (is_null($page_id)) {
             return false;
@@ -291,6 +291,7 @@ class PageManager
 
         $page_path = trim($page_path, '/');
         $children = PageManager::fetchChildPages($page_id);
+        $success = true; // Added by Peter S
 
         foreach ($children as $child) {
             $child_id = (int)$child['id'];
@@ -475,7 +476,9 @@ class PageManager
         // Fetch the Page Types for each page, if required
         if ($include_types) {
             foreach ($pages as &$page) {
-                $page['type'] = PageManager::fetchPageTypes($page['id']);
+                if (isset($page['id'])) {
+                    $page['type'] = PageManager::fetchPageTypes($page['id']);
+                }
             }
         }
 
@@ -768,7 +771,7 @@ class PageManager
      * @return boolean
      *  true if the type is used, false otherwise
      */
-    public static function hasPageTypeBeenUsed($page_id = null, $type)
+    public static function hasPageTypeBeenUsed($type, $page_id = null)
     {
         return (boolean)Symphony::Database()->fetchRow(0, sprintf(
             "SELECT

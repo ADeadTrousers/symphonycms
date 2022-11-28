@@ -25,7 +25,8 @@ $ul->appendChild($li);
 
 $errors_grouped = array();
 
-list($key, $val) = $e->getAdditional()->proc->getError(false, true);
+#list($key, $val) = $e->getAdditional()->proc->getError(false, true);
+$val = $e->getAdditional()->proc->getError(false, true);
 
 do {
     if (preg_match('/^loadXML\(\)/i', $val['message']) && preg_match_all('/line:\s+(\d+)/i', $val['message'], $matches)) {
@@ -38,7 +39,8 @@ do {
         $val['parts'] = explode(' ', $val['message'], 3);
         $errors_grouped['general'][] = $val;
     }
-} while (list($key, $val) = $e->getAdditional()->proc->getError());
+} while ($val = $e->getAdditional()->proc->getError());
+#} while (list($key, $val) = $e->getAdditional()->proc->getError());
 
 $query_string = General::sanitize($Page->__buildQueryString());
 
@@ -55,7 +57,7 @@ foreach ($errors_grouped as $group => $data) {
             $file = null;
             $line = null;
 
-            foreach ($data as $index => $e) {
+            /*foreach ($data as $index => $e) {
 
                 // Highlight error
                 $class = array();
@@ -119,7 +121,7 @@ foreach ($errors_grouped as $group => $data) {
                         );
                     }
                 }
-            }
+            }*/
 
             $content->appendChild($list);
             $error->appendChild($content);

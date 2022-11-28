@@ -25,9 +25,14 @@ class contentLogin extends HTMLPage
         $this->addElementToHead(new XMLElement('meta', null, array('charset' => 'UTF-8')), 0);
         $this->addElementToHead(new XMLElement('meta', null, array('http-equiv' => 'X-UA-Compatible', 'content' => 'IE=edge,chrome=1')), 1);
         $this->addElementToHead(new XMLElement('meta', null, array('name' => 'viewport', 'content' => 'width=device-width, initial-scale=1')), 2);
-        $this->addElementToHead(new XMLElement('meta', null, array('name' => 'robots', 'content' => 'noindex')), 3);
+        $this->addElementToHead(new XMLElement('meta', null, array('name' => 'robots', 'content' => 'noindex,nofollow,noarchive')), 3);
 
         parent::addStylesheetToHead(ASSETS_URL . '/css/symphony.min.css', 'screen', null, false);
+
+        // Add theme stylesheet to update login screen
+        if (file_exists(DOCROOT.'/extensions/modern_theme/assets/modern_theme.theme.css')) {
+            parent::addStylesheetToHead(URL.'/extensions/modern_theme/assets/modern_theme.theme.css');
+        }
 
         $this->setTitle(__('%1$s &ndash; %2$s', array(__('Login'), Symphony::Configuration()->get('sitename', 'general'))));
 
@@ -93,6 +98,7 @@ class contentLogin extends HTMLPage
                 $fieldset->appendChild(new XMLElement('p', __('Enter your email address or username to be sent further instructions for logging in.')));
 
                 $label = Widget::Label(__('Email Address or Username'));
+                $_POST['email'] = $_POST['email'] ?? null;
                 $label->appendChild(Widget::Input('email', General::sanitize($_POST['email']), 'text', array('autofocus' => 'autofocus')));
 
                 if (isset($this->_email_sent) && !$this->_email_sent) {

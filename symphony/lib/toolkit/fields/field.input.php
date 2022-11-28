@@ -192,6 +192,9 @@ class FieldInput extends Field implements ExportableField, ImportableField
 
     public function appendFormattedElement(XMLElement &$wrapper, $data, $encode = false, $mode = null, $entry_id = null)
     {
+        $data['value'] = $data['value'] ?? null;
+        $data['handle'] = $data['handle'] ?? null;
+
         $value = $data['value'];
 
         if ($encode === true) {
@@ -384,8 +387,10 @@ class FieldInput extends Field implements ExportableField, ImportableField
 
         foreach ($records as $r) {
             $data = $r->getData($this->get('id'));
+            if (!isset($data['value'])) $data['value'] = '';
             $value = General::sanitize($data['value']);
 
+						if (!isset($data['handle'])) $data['handle'] = '';
             if (!isset($groups[$this->get('element_name')][$data['handle']])) {
                 $groups[$this->get('element_name')][$data['handle']] = array(
                     'attr' => array('handle' => $data['handle'], 'value' => $value),

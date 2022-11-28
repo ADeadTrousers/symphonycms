@@ -258,6 +258,7 @@ class FieldAuthor extends Field implements ExportableField
             $authors = AuthorManager::fetchByID($value);
 
             foreach ($authors as $a) {
+                if (!isset($a)) continue;
                 $options[] = array($a->get('id'), in_array($a->get('id'), $value), $a->getFullName());
             }
         }
@@ -310,6 +311,8 @@ class FieldAuthor extends Field implements ExportableField
 
     public function appendFormattedElement(XMLElement &$wrapper, $data, $encode = false, $mode = null, $entry_id = null)
     {
+        $data['author_id'] = $data['author_id'] ?? null;
+
         if (!is_array($data['author_id'])) {
             $data['author_id'] = array($data['author_id']);
         }

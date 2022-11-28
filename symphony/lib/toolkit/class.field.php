@@ -595,7 +595,7 @@ class Field
      * @return XMLElement
      *    An XMLElement representing a `<select>` field containing the options.
      */
-    public function buildFormatterSelect($selected = null, $name = 'fields[format]', $label_value)
+    public function buildFormatterSelect($label_value, $selected = null, $name = 'fields[format]')
     {
         $formatters = TextformatterManager::listAll();
 
@@ -703,6 +703,7 @@ class Field
                     array(null, false, __('None'))
                 );
                 foreach ($interfaces as $id => $name) {
+                    $association_context['interface'] = $association_context['interface'] ?? null;
                     $options[] = array($id, ($association_context['interface'] === $id), $name);
                 }
 
@@ -720,6 +721,7 @@ class Field
                     array(null, false, __('None'))
                 );
                 foreach ($editors as $id => $name) {
+                    $association_context['editor'] = $association_context['editor'] ?? null;
                     $options[] = array($id, ($association_context['editor'] === $id), $name);
                 }
 
@@ -741,6 +743,9 @@ class Field
     public function getAssociationContext()
     {
         $context = Symphony::Engine()->Page->getContext();
+
+        $context['associations']['parent'] = $context['associations']['parent'] ?? null;
+
         $associations = $context['associations']['parent'];
         $field_association = array();
         $count = 0;
@@ -1025,6 +1030,7 @@ class Field
      */
     public function prepareTextValue($data, $entry_id = null)
     {
+        $data['value'] = $data['value'] ?? null;
         return strip_tags($data['value']);
     }
 

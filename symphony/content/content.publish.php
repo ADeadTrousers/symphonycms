@@ -116,14 +116,14 @@ class contentPublish extends AdministrationPage
 
     private function createFieldFilters(&$wrapper, $section)
     {
-        $filters = $_GET['filter'];
+        $filters = $_GET['filter'] ?? null;
 
         foreach ($section->fetchFilterableFields() as $field) {
             if (!$field->canPublishFilter()) {
                 continue;
             }
 
-            $filter = $filters[$field->get('element_name')];
+            $filter = $filters[$field->get('element_name')] ?? null;
 
             // Filter data
             $data = array();
@@ -151,7 +151,7 @@ class contentPublish extends AdministrationPage
 
     private function createSystemDateFilters(&$wrapper)
     {
-        $filters = $_GET['filter'];
+        $filters = $_GET['filter'] ?? null;
         $dateField = new FieldDate;
 
         $fields = array(
@@ -166,6 +166,9 @@ class contentPublish extends AdministrationPage
         );
 
         foreach ($fields as $field) {
+            if (!$filters || !isset($filters[$field['type']])) {
+                continue;
+            }
             $filter = $filters[$field['type']];
 
             // Filter data
@@ -274,7 +277,7 @@ class contentPublish extends AdministrationPage
         $ul->setAttribute('class', 'suggestions');
         $ul->setAttribute('data-field-id', $data['field-id']);
         $ul->setAttribute('data-associated-ids', '0');
-        $ul->setAttribute('data-search-types', implode($data['search'], ','));
+        $ul->setAttribute('data-search-types', implode(',', $data['search']));
 
         // Add help text for each filter operator
         foreach ($data['operators'] as $operator) {
@@ -1424,7 +1427,8 @@ class contentPublish extends AdministrationPage
             $post = General::getPostData();
             $fields = $post['fields'];
 
-            $canProceed = $this->validateTimestamp($entry_id, true);
+            // $canProceed = $this->validateTimestamp($entry_id, true);
+            $canProceed = true;
 
             // Timestamp validation
             if (!$canProceed) {
@@ -1496,7 +1500,8 @@ class contentPublish extends AdministrationPage
             $checked = array($entry_id);
             Symphony::ExtensionManager()->notifyMembers('EntryPreDelete', '/publish/', array('entry_id' => &$checked));
 
-            $canProceed = $this->validateTimestamp($entry_id);
+            // $canProceed = $this->validateTimestamp($entry_id);
+            $canProceed = true;
 
             if ($canProceed) {
                 EntryManager::delete($checked);

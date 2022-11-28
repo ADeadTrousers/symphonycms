@@ -300,7 +300,13 @@ class HTMLPage extends Page
     {
         $exclude[] = 'page';
         if (is_null($filters)) {
-            $filters = FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH | FILTER_SANITIZE_STRING;
+            //$filters = FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH | FILTER_SANITIZE_STRING;
+            // Inelegant patch by Peter S.
+            $pre_exclusion = http_build_query($_GET, null, '&');
+            parse_str($pre_exclusion, $query);
+            $post_exclusion = array_diff_key($query, array_fill_keys($exclude, true));
+            $query = http_build_query($post_exclusion, null, '&');
+            return filter_var(urldecode($query), FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
         }
 
         // Generate the full query string and then parse it back to an array

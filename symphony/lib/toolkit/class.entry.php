@@ -159,6 +159,7 @@ class Entry
     public function setDataFromPost($data, &$errors = null, $simulate = false, $ignore_missing_fields = false)
     {
         $status = Entry::__ENTRY_OK__;
+        $entry_id = null;
 
         // Entry has no ID, create it:
         if (!$this->get('id') && $simulate === false) {

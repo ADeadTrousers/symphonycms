@@ -402,6 +402,7 @@ class EntryManager
         if (!is_object($section)) {
             return array();
         }
+        $field = null;
 
         // SORTING
         // A single $entry_id doesn't need to be sorted on, or if it's explicitly disabled

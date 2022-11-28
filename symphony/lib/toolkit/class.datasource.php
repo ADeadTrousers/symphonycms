@@ -477,7 +477,7 @@ class Datasource
                 $bits = preg_split('/:/', $cleaned, -1, PREG_SPLIT_NO_EMPTY);
 
                 foreach ($bits as $param) {
-                    if ($param{0} !== '$') {
+                    if ($param[0] !== '$') {
                         $replacement = $param;
                         break;
                     }
@@ -583,7 +583,7 @@ class Datasource
      * @return integer
      *  Datasource::FILTER_OR or Datasource::FILTER_AND
      */
-    public function __determineFilterType($value)
+    public static function __determineFilterType($value)
     {
         if (Symphony::Log()) {
             Symphony::Log()->pushDeprecateWarningToLog('Datasource::__determineFilterType()', 'Datasource::determineFilterType()');

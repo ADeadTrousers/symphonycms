@@ -399,11 +399,11 @@ class Widget
                     $th->setValue($col[0]);
                 }
 
-                if ($col[1] && $col[1] != '') {
+                if (isset($col[1]) && $col[1] != '') {
                     $th->setAttribute('scope', $col[1]);
                 }
 
-                if (!empty($col[2]) && is_array($col[2])) {
+                if (isset($col[2]) && !empty($col[2]) && is_array($col[2])) {
                     $th->setAttributeArray($col[2]);
                 }
 

@@ -133,7 +133,7 @@ class Administration extends Symphony
                         $section_handle = $default_section->get('handle');
                     }
 
-                    if (!$section_handle) {
+                    if (!isset($section_handle)) {
                         $all_sections = SectionManager::fetch();
 
                         if (!empty($all_sections)) {
@@ -341,6 +341,7 @@ class Administration extends Symphony
             // Extension page, /symphony/extension/{extension_name}/
         } elseif ($bits[0] == 'extension' && isset($bits[1])) {
             $extension_name = $bits[1];
+            $bits[2] = $bits[2] ?? null;
             $bits = preg_split('/\//', trim($bits[2], '/'), 2, PREG_SPLIT_NO_EMPTY);
 
             $callback['driver'] = 'index';

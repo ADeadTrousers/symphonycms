@@ -240,6 +240,9 @@ class FieldUpload extends Field implements ExportableField, ImportableField
 
         $fields = array();
 
+        $fields['destination'] = $fields['destination'] ?? null;
+        $fields['validator'] = $fields['validator'] ?? null;
+
         $fields['destination'] = $this->get('destination');
         $fields['validator'] = ($fields['validator'] == 'custom' ? null : $this->get('validator'));
 
@@ -415,7 +418,6 @@ class FieldUpload extends Field implements ExportableField, ImportableField
     {
         $status = self::__OK__;
 
-        // No file given, save empty data:
         if ($data === null) {
             return array(
                 'file' =>       null,
@@ -491,6 +493,15 @@ class FieldUpload extends Field implements ExportableField, ImportableField
         // Do not continue on upload error:
         if ($data['error'] == UPLOAD_ERR_NO_FILE || $data['error'] != UPLOAD_ERR_OK) {
             return false;
+        }
+
+        if (!isset($data['name'])) {
+            return array(
+                'file' =>       null,
+                'mimetype' =>   null,
+                'size' =>       null,
+                'meta' =>       null
+            );
         }
 
         // Where to upload the new file?

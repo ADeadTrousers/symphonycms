@@ -272,7 +272,8 @@ class FrontendPage extends XSLTPage
             if (is_null($devkit) && !$output) {
                 $errstr = null;
 
-                while (list(, $val) = $this->Proc->getError()) {
+                #while (list($val) = $this->Proc->getError()) {
+                while ($val = $this->Proc->getError()) {
                     $errstr .= 'Line: ' . $val['line'] . ' - ' . $val['message'] . PHP_EOL;
                 }
 
@@ -364,6 +365,7 @@ class FrontendPage extends XSLTPage
             'this-month' => $date->format('m'),
             'this-day' => $date->format('d'),
             'timezone' => $date->format('P'),
+            'timestamp' => $date->format('U'),
             'website-name' => Symphony::Configuration()->get('sitename', 'general'),
             'page-title' => $page['title'],
             'root' => URL,
@@ -478,6 +480,7 @@ class FrontendPage extends XSLTPage
                     }
                 }
 
+                $this->_param[$handle] = $this->_param[$handle] ?? null;
                 $this->_param[$handle] = trim($this->_param[$handle], ',');
             }
         }
@@ -613,6 +616,7 @@ class FrontendPage extends XSLTPage
                 // (which will give up the 404), otherwise treat the `$page` as
                 // parameters of the index. RE: #1351
                 $index = PageManager::fetchPageByType('index');
+                $index['params'] = isset($index['params']) ? $index['params'] : null;
 
                 if (!$this->__isSchemaValid($index['params'], $page_extra_bits)) {
                     return false;
@@ -621,13 +625,14 @@ class FrontendPage extends XSLTPage
                 }
 
                 // Page resolved, check the schema (are the parameters valid?)
-            } elseif (!$this->__isSchemaValid($row['params'], $page_extra_bits)) {
+            } elseif (isset($row['params']) && !$this->__isSchemaValid($row['params'], $page_extra_bits)) {
                 return false;
             }
         }
 
         // Nothing resolved, bail now
         if (!is_array($row) || empty($row)) {
+
             return false;
         }
 

@@ -148,14 +148,20 @@ class Configuration
      */
     public function remove($name, $group = null)
     {
+        // $this->_forceLowerCase = $this->_forceLowerCase ?? null;
+
         if ($this->_forceLowerCase) {
             $name = strtolower($name);
             $group = strtolower($group);
         }
 
+        // $this->_properties[$group][$name] = $this->_properties[$group][$name] ?? null;
+        $this->_properties[$name] = $this->_properties[$name] ?? array();
+
         if ($group && isset($this->_properties[$group][$name])) {
             unset($this->_properties[$group][$name]);
-        } elseif ($this->_properties[$name]) {
+        }
+        elseif ($this->_properties[$name]) {
             unset($this->_properties[$name]);
         }
     }

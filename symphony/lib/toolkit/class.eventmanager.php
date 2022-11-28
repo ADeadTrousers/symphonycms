@@ -95,6 +95,8 @@ class EventManager implements FileResource
         $result = array();
         $structure = General::listStructure(EVENTS, '/event.[\\w-]+.php/', false, 'ASC', EVENTS);
 
+        $structure['filelist'] = $structure['filelist'] ?? array();
+
         if (is_array($structure['filelist']) && !empty($structure['filelist'])) {
             foreach ($structure['filelist'] as $f) {
                 $f = self::__getHandleFromFilename($f);

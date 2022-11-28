@@ -723,6 +723,8 @@ class FieldDate extends Field implements ExportableField, ImportableField
                     return false;
                 }
 
+                $parsed[$type] = $parsed[$type] ?? array();
+
                 if (!is_array($parsed[$type])) {
                     $parsed[$type] = array();
                 }

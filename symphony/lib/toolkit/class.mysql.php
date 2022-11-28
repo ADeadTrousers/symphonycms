@@ -537,7 +537,8 @@ class MySQL
             $query = preg_replace('/TYPE=(MyISAM|InnoDB)/i', 'ENGINE=$1', $query);
         } elseif ($query_type == self::__READ_OPERATION__ && !preg_match('/^SELECT\s+SQL(_NO)?_CACHE/i', $query)) {
             if ($this->isCachingEnabled()) {
-                $query = preg_replace('/^SELECT\s+/i', 'SELECT SQL_CACHE ', $query);
+                //$query = preg_replace('/^SELECT\s+/i', 'SELECT SQL_CACHE ', $query);
+                $query = preg_replace('/^SELECT\s+/i', 'SELECT ', $query);
             } else {
                 $query = preg_replace('/^SELECT\s+/i', 'SELECT SQL_NO_CACHE ', $query);
             }
@@ -836,7 +837,9 @@ class MySQL
 
         $rows = array();
         foreach ($result as $row) {
-            $rows[] = $row[$column];
+            if (isset($row[$column])) {
+                $rows[] = $row[$column];
+            }
         }
 
         return $rows;

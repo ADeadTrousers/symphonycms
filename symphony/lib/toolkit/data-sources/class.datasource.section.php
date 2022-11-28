@@ -50,7 +50,7 @@ class SectionDatasource extends Datasource
      */
     public function getSource()
     {
-        return $this->_source;
+        return $this->_source ?? false;
     }
 
     /**
@@ -61,6 +61,8 @@ class SectionDatasource extends Datasource
      */
     public function canProcessSystemParameters()
     {
+        $this->dsParamPARAMOUTPUT = $this->dsParamPARAMOUTPUT ?? null;
+
         if (!is_array($this->dsParamPARAMOUTPUT)) {
             return false;
         }
@@ -91,7 +93,10 @@ class SectionDatasource extends Datasource
     public function processRecordGroup($element, array $group)
     {
         $xGroup = new XMLElement($element, null, $group['attr']);
-
+        
+        $group['records'] = $group['records'] ?? null;
+        $group['groups'] = $group['groups'] ?? null;
+        
         if (is_array($group['records']) && !empty($group['records'])) {
             if (isset($group['records'][0])) {
                 $data = $group['records'][0]->getData();
@@ -156,13 +161,19 @@ class SectionDatasource extends Datasource
             $this->processOutputParameters($entry, $field_id, $values);
 
             if (!$this->_param_output_only) {
+                $mode = $mode ?? null;
                 foreach ($this->dsParamINCLUDEDELEMENTS as $handle) {
-                    list($handle, $mode) = preg_split('/\s*:\s*/', $handle, 2);
+                    // list($this_handle, $mode) = preg_split('/\s*:\s*/', $this_handle, 2);
+                    $split = preg_split('/\s*:\s*/', $handle, -1);
+                    $handle = $split[0] ?? null;
+                    $mode = $split[1] ?? null;
 
-                    if (self::$_fieldPool[$field_id]->get('element_name') == $handle) {
+                    if (self::$_fieldPool[$field_id]->get('element_name') == $handle) {                        
+                        $this->dsParamHTMLENCODE = $this->dsParamHTMLENCODE ?? false;                        
                         self::$_fieldPool[$field_id]->appendFormattedElement($xEntry, $values, ($this->dsParamHTMLENCODE === 'yes' ? true : false), $mode, $entry->get('id'));
                     }
                 }
+                // exit;
             }
         }
 
@@ -368,7 +379,7 @@ class SectionDatasource extends Datasource
      */
     public function processFilters(&$where, &$joins, &$group)
     {
-        if (!is_array($this->dsParamFILTERS) || empty($this->dsParamFILTERS)) {
+        if (!isset($this->dsParamFILTERS) || !is_array($this->dsParamFILTERS) || empty($this->dsParamFILTERS)) {
             return;
         }
 
@@ -482,6 +493,8 @@ class SectionDatasource extends Datasource
         $joins = null;
         $group = false;
 
+        $include_pagination_element = false;
+
         if (!$section = SectionManager::fetch((int)$this->getSource())) {
             $about = $this->about();
             trigger_error(__('The Section, %s, associated with the Data source, %s, could not be found.', array($this->getSource(), '<code>' . $about['name'] . '</code>')), E_USER_ERROR);
@@ -493,6 +506,7 @@ class SectionDatasource extends Datasource
         ));
 
         if ($this->_force_empty_result == true) {
+            $this->dsParamREDIRECTONREQUIRED = $this->dsParamREDIRECTONREQUIRED ?? false;
             if ($this->dsParamREDIRECTONREQUIRED === 'yes') {
                 throw new FrontendPageNotFoundException;
             }
@@ -519,6 +533,7 @@ class SectionDatasource extends Datasource
             return $result;
         }
 
+        $this->dsParamINCLUDEDELEMENTS = $this->dsParamINCLUDEDELEMENTS ?? null;
         if (is_array($this->dsParamINCLUDEDELEMENTS)) {
             $include_pagination_element = in_array('system:pagination', $this->dsParamINCLUDEDELEMENTS);
         } else {
@@ -538,19 +553,25 @@ class SectionDatasource extends Datasource
         // Process Filters
         $this->processFilters($where, $joins, $group);
 
+        $this->dsParamSORT = $this->dsParamSORT ?? null;
+        $this->dsParamORDER = $this->dsParamORDER ?? null;
+
         // Process Sorting
         if ($this->dsParamSORT == 'system:id') {
             EntryManager::setFetchSorting('system:id', $this->dsParamORDER);
-        } elseif ($this->dsParamSORT == 'system:date' || $this->dsParamSORT == 'system:creation-date') {
+        }
+        elseif ($this->dsParamSORT == 'system:date' || $this->dsParamSORT == 'system:creation-date') {
             if ($this->dsParamSORT === 'system:date' && Symphony::Log()) {
                 Symphony::Log()->pushDeprecateWarningToLog('system:date', 'system:creation-date', array(
                     'message-format' => __('The `%s` data source sort is deprecated.')
                 ));
             }
             EntryManager::setFetchSorting('system:creation-date', $this->dsParamORDER);
-        } elseif ($this->dsParamSORT == 'system:modification-date') {
+        }
+        elseif ($this->dsParamSORT == 'system:modification-date') {
             EntryManager::setFetchSorting('system:modification-date', $this->dsParamORDER);
-        } else {
+        }
+        else {
             EntryManager::setFetchSorting(
                 FieldManager::fetchFieldIDFromElementName($this->dsParamSORT, $this->getSource()),
                 $this->dsParamORDER
@@ -565,6 +586,7 @@ class SectionDatasource extends Datasource
             $datasource_schema = array_merge($datasource_schema, $this->dsParamPARAMOUTPUT);
         }
 
+        $this->dsParamGROUP = $this->dsParamGROUP ?? null;
         if ($this->dsParamGROUP) {
             $datasource_schema[] = FieldManager::fetchHandleFromID($this->dsParamGROUP);
         }
@@ -594,9 +616,10 @@ class SectionDatasource extends Datasource
         Symphony::ExtensionManager()->notifyMembers('DataSourceEntriesBuilt', '/frontend/', array(
             'datasource' => &$this,
             'entries' => &$entries,
-            'filters' => $this->dsParamFILTERS
+            'filters' => $this->dsParamFILTERS ?? null
         ));
 
+        $entries['total-entries'] = $entries['total-entries'] ?? null;
         $entries_per_page = ($this->dsParamPAGINATERESULTS === 'yes' && isset($this->dsParamLIMIT) && $this->dsParamLIMIT >= 0 ? $this->dsParamLIMIT : $entries['total-entries']);
 
         if (($entries['total-entries'] <= 0 || $include_pagination_element === true) && (!is_array($entries['records']) || empty($entries['records'])) || $this->dsParamSTARTPAGE == '0') {

@@ -200,6 +200,14 @@ class Gateway
             case 'URL':
                 $this->_url = $value;
                 $url_parsed = parse_url($value);
+                $url_parsed['host'] = $url_parsed['host'] ?? null;
+                $url_parsed['scheme'] = $url_parsed['scheme'] ?? null;
+                $url_parsed['port'] = $url_parsed['port'] ?? null;
+                $url_parsed['path'] = $url_parsed['path'] ?? null;
+                $url_parsed['query'] = $url_parsed['query'] ?? null;
+                $url_parsed['user'] = $url_parsed['user'] ?? null;
+                $url_parsed['pass'] = $url_parsed['pass'] ?? null;
+
                 $this->_host = $url_parsed['host'];
 
                 if (isset($url_parsed['scheme']) && strlen(trim($url_parsed['scheme'])) > 0) {

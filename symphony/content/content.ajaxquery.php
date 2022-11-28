@@ -11,6 +11,10 @@ class contentAjaxQuery extends JSONPage
 {
     public function view()
     {
+        $_GET['field_id'] = $_GET['field_id'] ?? null;
+        $_GET['query'] = $_GET['query'] ?? '';
+        $_GET['limit'] = $_GET['limit'] ?? 0;
+
         $database = Symphony::Configuration()->get('db', 'database');
         $field_ids = array_map(array('General','intval'), explode(',', General::sanitize($_GET['field_id'])));
         $search = MySQL::cleanValue(General::sanitize($_GET['query']));
@@ -99,14 +103,14 @@ class contentAjaxQuery extends JSONPage
         if (!empty($search)) {
 
             // Get columns
-            $columns = Symphony::Database()->fetchCol('column_name',
+            $columns = Symphony::Database()->fetchCol('COLUMN_NAME',
                 sprintf(
-                    "SELECT column_name
+                    "SELECT COLUMN_NAME
                     FROM information_schema.columns
                     WHERE table_schema = '%s'
                     AND table_name = 'tbl_entries_data_%d'
-                    AND column_name != 'id'
-                    AND column_name != 'entry_id';",
+                    AND COLUMN_NAME != 'id'
+                    AND COLUMN_NAME != 'entry_id';",
                     $database,
                     $field_id
                 )
@@ -122,7 +126,7 @@ class contentAjaxQuery extends JSONPage
             $query = sprintf(
                 "SELECT * from tbl_entries_data_%d WHERE %s%s;",
                 $field_id,
-                implode($where, " OR "),
+                implode(" OR ", $where),
                 $max
             );
         } else {

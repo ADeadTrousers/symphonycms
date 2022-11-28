@@ -92,6 +92,8 @@ abstract class SectionEvent extends Event
                 }
             }
 
+            $fields[$field->get('element_name')] = $fields[$field->get('element_name')] ?? null;
+
             if (is_array($fields[$field->get('element_name')])) {
                 $type = array_reduce($fields[$field->get('element_name')], array('SectionEvent', '__reduceType'));
             } else {
@@ -263,7 +265,7 @@ abstract class SectionEvent extends Event
                 }
 
                 // Execute the event for this entry
-                if (!$this->__doit($fields, $entry, $position, $entry_id)) {
+                if (!$this->__doit($entry, $fields, $position, $entry_id)) {
                     $success = false;
                 }
 
@@ -276,7 +278,7 @@ abstract class SectionEvent extends Event
                 $entry_id = $post['id'];
             }
 
-            $success = $this->__doit($fields, $result, null, $entry_id);
+            $success = $this->__doit($result, $fields, null, $entry_id);
         }
 
         if ($success && isset($_REQUEST['redirect'])) {
@@ -306,7 +308,7 @@ abstract class SectionEvent extends Event
      * @return XMLElement
      *  The result of the Event
      */
-    public function __doit(array $fields = array(), XMLElement &$result, $position = null, $entry_id = null)
+    public function __doit(XMLElement &$result, array $fields = array(), $position = null, $entry_id = null)
     {
         $post_values = new XMLElement('post-values');
 
@@ -598,7 +600,10 @@ abstract class SectionEvent extends Event
 
         if (is_array($this->filter_errors) && !empty($this->filter_errors)) {
             foreach ($this->filter_errors as $fr) {
-                list($name, $status, $message, $attributes) = $fr;
+                $name = $fr[0] ?? null;
+                $status = $fr[1] ?? null;
+                $message = $fr[2] ?? null;
+                $attributes = $fr[3] ?? null;
 
                 $result->appendChild(
                     self::buildFilterElement($name, ($status ? 'passed' : 'failed'), $message, $attributes)
@@ -632,17 +637,17 @@ abstract class SectionEvent extends Event
      */
     public function processSendMailFilter(XMLElement $result, array $send_email, array &$fields, Section $section, Entry $entry)
     {
-        $fields['recipient']        = self::replaceFieldToken($send_email['recipient'], $fields);
-        $fields['recipient']        = preg_split('/\,/i', $fields['recipient'], -1, PREG_SPLIT_NO_EMPTY);
-        $fields['recipient']        = array_map('trim', $fields['recipient']);
+        $fields['recipient']        = self::replaceFieldToken($send_email['recipient'] ?? null, $fields);
+        $fields['recipient']        = preg_split('/\,/i', $fields['recipient'] ?? null, -1, PREG_SPLIT_NO_EMPTY);
+        $fields['recipient']        = array_map('trim', $fields['recipient'] ?? null);
 
-        $fields['subject']          = self::replaceFieldToken($send_email['subject'], $fields, __('[Symphony] A new entry was created on %s', array(Symphony::Configuration()->get('sitename', 'general'))));
-        $fields['body']             = self::replaceFieldToken($send_email['body'], $fields, null, false, false);
-        $fields['sender-email']     = self::replaceFieldToken($send_email['sender-email'], $fields);
-        $fields['sender-name']      = self::replaceFieldToken($send_email['sender-name'], $fields);
+        $fields['subject']          = self::replaceFieldToken($send_email['subject'] ?? null, $fields, __('[Symphony] A new entry was created on %s', array(Symphony::Configuration()->get('sitename', 'general'))));
+        $fields['body']             = self::replaceFieldToken($send_email['body'] ?? null, $fields, null, false, false);
+        $fields['sender-email']     = self::replaceFieldToken($send_email['sender-email'] ?? null, $fields);
+        $fields['sender-name']      = self::replaceFieldToken($send_email['sender-name'] ?? null, $fields);
 
-        $fields['reply-to-name']    = self::replaceFieldToken($send_email['reply-to-name'], $fields);
-        $fields['reply-to-email']   = self::replaceFieldToken($send_email['reply-to-email'], $fields);
+        $fields['reply-to-name']    = self::replaceFieldToken($send_email['reply-to-name'] ?? null, $fields);
+        $fields['reply-to-email']   = self::replaceFieldToken($send_email['reply-to-email'] ?? null, $fields);
 
         $edit_link = SYMPHONY_URL . '/publish/' . $section->get('handle') . '/edit/' . $entry->get('id').'/';
         $language = Symphony::Configuration()->get('lang', 'symphony');

@@ -624,7 +624,8 @@ class contentBlueprintsSections extends AdministrationPage
             if ($edit) {
                 $section_id = $this->_context[1];
                 $existing_section = SectionManager::fetch($section_id);
-                $canProceed = $this->validateTimestamp($section_id, true);
+                // $canProceed = $this->validateTimestamp($section_id, true);
+                $canProceed = true;
                 if (!$canProceed) {
                     $this->addTimestampValidationPageAlert($this->_errors['timestamp'], $existing_section, 'save');
                 }
@@ -671,6 +672,7 @@ class contentBlueprintsSections extends AdministrationPage
                     $name_list = array();
 
                     foreach ($fields as $position => $data) {
+                        $data['element_name'] = $data['element_name'] ?? null;
                         if (trim($data['element_name']) == '') {
                             $data['element_name'] = $fields[$position]['element_name'] = $_POST['fields'][$position]['element_name'] = Lang::createHandle($data['label'], 255, '-', false, true, array('@^[\d-]+@i' => ''));
                         }
@@ -889,7 +891,8 @@ class contentBlueprintsSections extends AdministrationPage
 
         if (@array_key_exists('delete', $_POST['action'])) {
             $section_id = $this->_context[1];
-            $canProceed = $this->validateTimestamp($section_id);
+            // $canProceed = $this->validateTimestamp($section_id);
+            $canProceed = true;
 
             if (!$canProceed) {
                 $this->addTimestampValidationPageAlert(
@@ -929,6 +932,7 @@ class contentBlueprintsSections extends AdministrationPage
 
     public function addSectionOptions(array &$meta = null)
     {
+        $meta = array_merge(array('hidden' => null, 'filter' => null), $meta); //Added by Peter S
         $fieldset = new XMLElement('fieldset');
         $fieldset->setAttribute('class', 'settings');
         $fieldset->appendChild(new XMLElement('legend', __('Options')));

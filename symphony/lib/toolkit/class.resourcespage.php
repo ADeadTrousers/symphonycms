@@ -104,6 +104,7 @@ abstract class ResourcesPage extends AdministrationPage
      */
     public function __viewIndex($resource_type)
     {
+        $context = null;
         $manager = ResourceManager::getManagerFromType($resource_type);
         $friendly_resource = ($resource_type === ResourceManager::RESOURCE_TYPE_EVENT) ? __('Event') : __('DataSource');
 
@@ -150,6 +151,8 @@ abstract class ResourcesPage extends AdministrationPage
                 $locked = null;
 
                 // Locked resources
+                $r['source']['name'] = $r['source']['name'] ?? false;
+                
                 if (
                     isset($r['can_parse']) && $r['can_parse'] !== true ||
                     ($resource_type === ResourceManager::RESOURCE_TYPE_DS && $r['source']['name'] === 'Dynamic_xml')
@@ -220,7 +223,7 @@ abstract class ResourcesPage extends AdministrationPage
                 }
 
                 // Authors
-                $author = $r['author']['name'];
+                $author = $r['author']['name'] ?? false;
 
                 if ($author) {
                     if (isset($r['author']['website'])) {
@@ -290,6 +293,7 @@ abstract class ResourcesPage extends AdministrationPage
          *  in the With Selected menu. Options should follow the same format
          *  expected by `Widget::__SelectBuildOption`. Passed by reference.
          */
+        $context['pageroot'] = $context['pageroot'] ?? null;
         Symphony::ExtensionManager()->notifyMembers('AddCustomActions', $context['pageroot'], array(
             'options' => &$options
         ));
