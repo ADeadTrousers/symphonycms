@@ -14,7 +14,7 @@
     }
 
     // Defines some constants
-    $clean_url = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : null;
+    $clean_url = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '';
     $clean_url = dirname(rtrim($_SERVER['PHP_SELF'], $clean_url));
     $clean_url = rtrim($_SERVER['HTTP_HOST'] . $clean_url, '/\\');
     $clean_url = preg_replace(array('/\/{2,}/i', '/install$/i'), array('/', null), $clean_url);

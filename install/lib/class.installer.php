@@ -16,7 +16,7 @@
             self::$Profiler = Profiler::instance();
             self::$Profiler->sample('Engine Initialisation');
 
-            if (get_magic_quotes_gpc()) {
+            if (function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc()) {
                 General::cleanArray($_SERVER);
                 General::cleanArray($_COOKIE);
                 General::cleanArray($_GET);
