@@ -337,6 +337,8 @@ class MySQL
      */
     public function connect($host = null, $user = null, $password = null, $port = '3306', $database = null)
     {
+    	mysqli_report(MYSQLI_REPORT_OFF);
+
         self::$_connection = array(
             'host' => $host,
             'user' => $user,
