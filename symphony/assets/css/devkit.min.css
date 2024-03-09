@@ -1,5 +1,5 @@
 /*!
- * symphonycms v2.7.10
+ * symphonycms v2.7.11
  * commit 06ee00e - 2019-04-08
  * https://www.getsymphony.com
  * Copyright (c) 2019

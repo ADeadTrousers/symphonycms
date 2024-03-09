@@ -185,7 +185,7 @@ class contentBlueprintsEvents extends ResourcesPage
             }
 
             $this->Form->appendChild(
-                Widget::Input('fields[source]', $options[0]['options'][0][0] ?? '', 'hidden', array('id' => 'event-source'))
+                Widget::Input('fields[source]', $options[0]['options'][0][0], 'hidden', array('id' => 'event-source'))
             );
 
             // Name

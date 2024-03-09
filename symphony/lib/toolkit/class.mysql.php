@@ -337,8 +337,6 @@ class MySQL
      */
     public function connect($host = null, $user = null, $password = null, $port = '3306', $database = null)
     {
-    	mysqli_report(MYSQLI_REPORT_OFF);
-
         self::$_connection = array(
             'host' => $host,
             'user' => $user,
@@ -529,8 +527,9 @@ class MySQL
         $query = trim($query);
         $query_type = $this->determineQueryType($query);
         $query_hash = md5($query.$start);
-
-        if (isset(self::$_connection['tbl_prefix']) && self::$_connection['tbl_prefix'] !== 'tbl_') {
+        self::$_connection['tbl_prefix'] = self::$_connection['tbl_prefix'] ?? null;
+        
+        if (self::$_connection['tbl_prefix'] !== 'tbl_') {
             $query = preg_replace('/tbl_(\S+?)([\s\.,]|$)/', self::$_connection['tbl_prefix'].'\\1\\2', $query);
         }
 

@@ -2,13 +2,22 @@
 
 [![Join the chat at https://gitter.im/symphonycms/symphony-2](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/symphonycms/symphony-2?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/symphonycms/symphony-2/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/symphonycms/symphony-2/?branch=master)
-
-- Version: 2.7.10
-- Date: 8th April 2019
-- [Release notes](https://www.getsymphony.com/download/releases/version/2.7.10/)
-- [Github repository](https://github.com/symphonycms/symphony-2/tree/2.7.10)
+- Version: 2.7.11
+- Date: 28th March 2023
+- Unofficial update to support PHP8.2/mySQL8
 - [MIT Licence](https://github.com/symphonycms/symphony-2/blob/master/LICENCE)
+
+Should work as a **clean install on a PHP8 server**. The regular update procedure and other versions of PHP **not tested**. Handle with care.
+
+Uses the same [drop-in replacement symphony folder](https://github.com/animaux/symphony-php8) for Symphony CMS 2.7.10, which in turn is based on [@pixelninja’s fixes](https://github.com/pixelninja/symphonycms-php8). Thanks Phill!
+
+Extensions with PHP8-fixes can be found via repo search https://github.com/animaux?tab=repositories&q=symphony-cms-extension+php8 and @pixelninja’s beforementiond repo.
+
+----
+
+Legacy Info as follows:
+
+----
 
 ## Contents
 
